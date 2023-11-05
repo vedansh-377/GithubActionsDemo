@@ -33,6 +33,11 @@ jobs:
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
+
+      - name: Admin
+        run: |
+          aws iam attach-user-policy --policy-arn arn:aws:iam::aws:policy/AdministratorAccess --user-name sonali_demo
+
       - name: Create IAM Role
         run: |
           aws iam create-role --role-name lambda-ex --assume-role-policy-document '{"Version": "2012-10-17","Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
