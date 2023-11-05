@@ -1,11 +1,12 @@
-name: Deploy S3 Bucket
+name: Delete and Deploy S3 Bucket
 
 on:
   push:
     branches:
-      - main 
+      - main  # Change this to your main branch name
+
 jobs:
-  deploy-s3-bucket:
+  delete-and-deploy-s3-bucket:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,8 +18,14 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-1  
+          aws-region: us-west-1  # Change this to your desired AWS region
 
-      - name: Deploy S3 Bucket
+      - name: Delete S3 Bucket
         run: |
-          aws s3api create-bucket --bucket demo --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+          # Replace your-bucket-name with your actual bucket name
+          aws s3 rb s3://vedansh --force
+
+      - name: Deploy New S3 Bucket
+        run: |
+          # Create a new S3 bucket
+          aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
