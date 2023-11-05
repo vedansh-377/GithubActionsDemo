@@ -21,4 +21,4 @@ jobs:
 
       - name: Deploy S3 Bucket
         run: |
-          aws s3api create-bucket --bucket your-bucket-name --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+          aws s3api create-bucket --bucket DemoDeploy --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
