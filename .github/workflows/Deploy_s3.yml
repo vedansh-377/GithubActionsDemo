@@ -32,4 +32,4 @@ jobs:
       
       - name: Upload Image to S3
         run: |
-          aws s3 cp GithubActionsDemo/WhiteSaucePasta.jpg s3://vedansh
+          aws s3 cp WhiteSaucePasta.jpg s3://vedansh
