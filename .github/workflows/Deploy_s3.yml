@@ -1,0 +1,24 @@
+name: Deploy S3 Bucket
+
+on:
+  push:
+    branches:
+      - main 
+jobs:
+  deploy-s3-bucket:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1  
+
+      - name: Deploy S3 Bucket
+        run: |
+          aws s3api create-bucket --bucket your-bucket-name --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
