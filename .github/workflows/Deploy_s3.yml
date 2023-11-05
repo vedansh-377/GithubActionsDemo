@@ -20,7 +20,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  # Change this to your desired AWS region
 
-
       - name: Delete S3 Bucket
         run: |
           # Replace your-bucket-name with your actual bucket name
@@ -29,12 +28,12 @@ jobs:
       - name: Deploy S3 Bucket
         run: |
           aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
-      
+
       - name: Upload Image to S3
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://vedansh
-          
-     - name: Create IAM Role
+
+      - name: Create IAM Role
         run: |
           aws iam create-role --role-name lambda-ex --assume-role-policy-document '{"Version": "2012-10-17","Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
 
@@ -44,4 +43,4 @@ jobs:
 
       - name: Deploy Lambda Function
         run: |
-          aws lambda create-function --function-name vedans --runtime python3.8 --role arn:aws:iam::YOUR_ACCOUNT_ID:role/lambda-ex --handler lambda_function.lambda_handler --zip-file fileb:///PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-west-1
+          aws lambda create-function --function-name vedans --runtime python3.8 --role arn:aws:iam::115941228118:role/lambda-ex --handler lambda_function.lambda_handler --zip-file fileb:///PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-west-1
