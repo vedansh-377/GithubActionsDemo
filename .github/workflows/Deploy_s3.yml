@@ -1,4 +1,4 @@
-name: Delete and Deploy S3 Bucket
+name: Deploy S3, Upload Image, and Deploy Lambda Function
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main  # Change this to your main branch name
 
 jobs:
-  delete-and-deploy-s3-bucket:
+  deploy-s3-lambda:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,12 +20,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  # Change this to your desired AWS region
 
+
       - name: Delete S3 Bucket
         run: |
           # Replace your-bucket-name with your actual bucket name
           aws s3 rb s3://vedansh --force
 
-      - name: Deploy New S3 Bucket
+      - name: Deploy S3 Bucket
         run: |
-          # Create a new S3 bucket
           aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+      
+      - name: Upload Image to S3
+        run: |
+          aws s3 cp GithubActionsDemo/WhiteSaucePasta.jpg s3://vedansh
