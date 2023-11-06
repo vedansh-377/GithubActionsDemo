@@ -23,7 +23,7 @@ jobs:
 
       - name: Update AWS CLI
         run: |
-          sudo apt-get update
+          ifconfig
           aws --version
           sudo apt-get install --only-upgrade awscli
       - name: Delete S3 Bucket
