@@ -35,7 +35,7 @@ jobs:
 
       - name: Delete Lambda Function
         run: |
-          aws lambda delete-function --function-name vedansh --region eu-west-1
+          aws lambda delete-function --function-name vedu --region eu-west-1
 
       - name: Deploy Lambda Function
         run: |
