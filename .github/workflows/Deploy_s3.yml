@@ -23,7 +23,7 @@ jobs:
 
       - name: Update AWS CLI
         run: |
-          ping -c 4 example.com
+          ping -c 4 google.com
           curl https://jsonplaceholder.typicode.com/todos/1
           aws --version
       - name: Delete S3 Bucket
