@@ -33,9 +33,9 @@ jobs:
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
-      # - name: Delete Lambda Function
-      #   run: |
-      #     aws lambda delete-function --function-name vedansh --region eu-west-1
+      - name: Delete Lambda Function
+        run: |
+          aws lambda delete-function --function-name vedansh --region eu-west-1
 
       - name: Deploy Lambda Function
         run: |
