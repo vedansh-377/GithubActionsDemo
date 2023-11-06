@@ -23,7 +23,7 @@ jobs:
       - name: Delete S3 Bucket
         run: |
           # Replace your-bucket-name with your actual bucket name
-          aws s3 rb s3://vedansh --force
+          aws s3 rb s3://vedansh --force || true  # Ignore error if bucket doesn't exist
 
       - name: Deploy S3 Bucket
         run: |
@@ -35,7 +35,7 @@ jobs:
 
       - name: Delete Lambda Function
         run: |
-          aws lambda delete-function --function-name vedu --region eu-west-1
+          aws lambda delete-function --function-name vedu --region eu-west-1 || true  # Ignore error if function doesn't exist
 
       - name: Deploy Lambda Function
         run: |
@@ -43,20 +43,22 @@ jobs:
 
       - name: Export and Store Lex Bot as Artifact
         run: |
-          aws lex-models get-export --name "BookTrip_enIN"  --version "1"  --exportType "Lex"  --resourceType "BOT"  
+          # Modify the command to export and save the Lex Bot appropriately
+          aws lex-models get-export --name "BookTrip_enIN"  --version "1"  --exportType "Lex"  --resourceType "BOT" > exported_bot.json
 
       - name: Save Exported Bot as Artifact
         uses: actions/upload-artifact@v2
         with:
           name: exported-lex-bot
-          path: ./exported_bot
+          path: ./exported_bot.json
 
       - name: Download Exported Bot Artifact
         uses: actions/download-artifact@v2
         with:
           name: exported-lex-bot
-          path: ./imported_bot
+          path: ./imported_bot.json
 
       - name: Import Lex Bot
         run: |
-          aws lex-models put-bot --cli-input-json file://imported_bot/imported-bot.json
+          # Modify the command to import the Lex Bot
+          aws lex-models put-bot --cli-input-json file://imported_bot.json
