@@ -43,7 +43,7 @@ jobs:
 
       - name: Export Lex Bot
         run: |
-          aws lex-models get-export --resource-type BOT --name "PastaOrderDemo" --resource-version "\$LATEST" --export-type "LEX" --output-destination "exported-bot.zip"
+          aws lex-models get-export --resource-type BOT --name "PastaOrderDemo" --resource-version "\$LATEST" --export-type "LEX" > exported-bot.zip
           mkdir exported_bot
           mv exported-bot.zip ./exported_bot/exported-bot.zip
 
