@@ -41,6 +41,6 @@ jobs:
       #   run: |
       #     aws iam attach-role-policy --role-name lambda --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
-      - name: Deploy Lambda Function
+      - name: Deploy Lambda Function1
         run: |
           aws lambda create-function --function-name vedansh --runtime python3.11 --role arn:aws:iam::115941228118:role/lambda --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region eu-west-1
