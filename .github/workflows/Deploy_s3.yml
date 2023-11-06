@@ -20,6 +20,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  # Change to your desired AWS region
 
+
+      - name: Update AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install --only-upgrade awscli
       - name: Delete S3 Bucket
         run: |
           # Replace your-bucket-name with your actual bucket name
