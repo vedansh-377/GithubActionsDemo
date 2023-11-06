@@ -43,7 +43,7 @@ jobs:
 
       - name: Export and Store Lex Bot as Artifact
         run: |
-          aws lex-models get-export --name "BookTrip_enIN" --resource-type BOT --export-type LEX --resource-version "1"      
+          aws lex-models get-export --name \"BookTrip_enIN\"  --version \"1\"  --exportType \"Lex\"  --resourceType \"BOT\"  
 
       - name: Save Exported Bot as Artifact
         uses: actions/upload-artifact@v2
