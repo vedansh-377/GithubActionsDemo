@@ -33,13 +33,13 @@ jobs:
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
-      - name: Create IAM Role
-        run: |
-          aws iam create-role --role-name lambda --assume-role-policy-document '{"Version": "2012-10-17","Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
+      # - name: Create IAM Role
+      #   run: |
+      #     aws iam create-role --role-name lambda --assume-role-policy-document '{"Version": "2012-10-17","Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
 
-      - name: Attach Policies
-        run: |
-          aws iam attach-role-policy --role-name lambda --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      # - name: Attach Policies
+      #   run: |
+      #     aws iam attach-role-policy --role-name lambda --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
 
       - name: Deploy Lambda Function
         run: |
