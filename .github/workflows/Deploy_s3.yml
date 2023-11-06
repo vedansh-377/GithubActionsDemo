@@ -40,3 +40,26 @@ jobs:
       - name: Deploy Lambda Function
         run: |
           aws lambda create-function --function-name vedu --runtime python3.11 --role arn:aws:iam::115941228118:role/lambda --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region eu-west-1
+
+      - name: Export Lex Bot
+        run: |
+          aws lex-models get-export --resource-type BOT --resource-version "\$LATEST" --name "FoodOrder" --export-type "LEX" --output-destination "exported-bot.zip"
+          mkdir exported_bot
+          mv exported-bot.zip ./exported_bot/exported-bot.zip
+
+
+      - name: Save Exported Bot as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: exported-lex-bot
+          path: ./exported_bot
+
+      - name: Download Exported Bot Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: exported-lex-bot
+          path: ./imported_bot
+
+      - name: Import Lex Bot
+        run: |
+          aws lex-models put-bot --cli-input-json file://imported_bot/imported-bot.json
