@@ -50,7 +50,7 @@ jobs:
           echo "::set-output name=exportId::$export_id"
           export_response=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1)
           # download_url=$(echo "$export_response" | jq -r '.downloadUrl')
-          $export_response
+          echo "Export Response JSON: $export_response"
 
       - name: Save Exported Bot as Artifact
         uses: actions/upload-artifact@v2
