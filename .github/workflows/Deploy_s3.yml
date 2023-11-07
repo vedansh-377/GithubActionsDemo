@@ -44,8 +44,16 @@ jobs:
       - name: Export and Store Lex Bot as Artifact
         run: |
           # Modify the command to export and save the Lex Bot appropriatel
-          aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
-      # - name: Download Lex Bot Data
+          # aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
+          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
+
+          # Parse the response and extract the exportId using jq
+          export_id=$(echo "$export_response" | jq -r '.exportId')
+
+          # Store the Export ID as an environment variable for later use
+          echo "::set-env name=LEX_EXPORT_ID::$export_id"
+      
+          # - name: Download Lex Bot Data
       #   run: |
       #     # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
       #     curl -o exported_bot.zip "URL_PROVIDED_IN_JSON"
@@ -53,11 +61,11 @@ jobs:
       # - name: List Downloaded Files
       #   run: |
       #      ls -l
-      - name: Save Exported Bot as Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: exported-lex-bot
-          path: ./exported_bot.json
+      # - name: Save Exported Bot as Artifact
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: exported-lex-bot
+      #     path: ./exported_bot.json
 
       # - name: Download Exported Bot Artifact
       #   uses: actions/download-artifact@v2
