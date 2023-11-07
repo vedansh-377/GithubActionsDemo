@@ -63,7 +63,8 @@ jobs:
       - name: create Import URl
         run: |
           # aws s3api create-bucket --bucket bot --region us-east-1
-          aws s3 cp exported_bot.zip s3://vedansh/bot
+          aws s3api put-object --bucket vedansh --key bot/
+          aws s3 cp exported_bot.zip s3://vedansh/bot/
           import=$(aws lexv2-models create-upload-url --region us-east-1)
           sleep 30
           import_Id=$(echo "$import" | jq -r '.importId')
