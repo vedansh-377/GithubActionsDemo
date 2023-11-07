@@ -20,10 +20,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  # Change to your desired AWS region
 
-      # - name: Delete S3 Bucket
-      #   run: |
-      #     # Replace your-bucket-name with your actual bucket name
-      #     aws s3 rb s3://vedansh --force  --region us-west-1  # Ignore error if bucket doesn't exist
+      - name: Delete S3 Bucket
+        run: |
+          # Replace your-bucket-name with your actual bucket name
+          aws s3 rb s3://vedansh --force  --region us-west-1  # Ignore error if bucket doesn't exist
 
       - name: Deploy S3 Bucket
         run: |
