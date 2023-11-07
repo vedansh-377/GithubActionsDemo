@@ -72,7 +72,7 @@ jobs:
           import_data=$(cat <<EOF
           {
             "botImportSpecification": {
-              "botName": "ddd",
+              "botName": "PastaOrderDemo",
               "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
               "dataPrivacy": { "childDirected": false },
               "idleSessionTTLInSeconds": 3600
