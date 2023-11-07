@@ -49,7 +49,7 @@ jobs:
           export_id=$(echo "$export_response" | jq -r '.exportId')
           echo "::set-output name=exportId::$export_id"
 
-          aws lexv2-models describe-export --export-id $export_id > exported_bot.zip
+          aws lexv2-models describe-export --export-id $export_id --region us-east-1> exported_bot.zip
           mv exported_bot.zip $GITHUB_WORKSPACE/exported_bot.zip
           echo "::set-output name=exportedBotPath::$GITHUB_WORKSPACE/exported_bot.zip"
           # - name: Download Lex Bot Data
