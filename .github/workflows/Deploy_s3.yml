@@ -51,27 +51,9 @@ jobs:
 
           aws lexv2-models describe-export --export-id $export_id --region us-east-1> exported_bot.zip
           echo "::set-output name=exportedBotPath::$GITHUB_WORKSPACE/exported_bot.zip"
-          # - name: Download Lex Bot Data
-      #   run: |
-      #     # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
-      #     curl -o exported_bot.zip "URL_PROVIDED_IN_JSON"
-          
-      # - name: List Downloaded Files
-      #   run: |
-      #      ls -l
+    
       - name: Save Exported Bot as Artifact
         uses: actions/upload-artifact@v2
         with:
           name: exported-lex-bot
-          path: ./exported_bot.json
-
-      # - name: Download Exported Bot Artifact
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: exported-lex-bot
-      #     path: ./imported_bot.json
-
-      # - name: Import Lex Bot
-      #   run: |
-      #     # Modify the command to import the Lex Bot
-      #     aws lex-models put-bot --cli-input-json file://imported_bot.json
+          path: ${{ steps.exportedBotPath.outputs.exportedBotPath }}
