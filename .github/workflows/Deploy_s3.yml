@@ -86,11 +86,11 @@ jobs:
               "storageLocation": {
                 "s3BucketName": "bot",
                 "s3Path": "s3://bot"
-              },
-              
+              }
             }
           }
           EOF
           )
+
                     # escaped_data=$(echo "$import_data" | sed 's/"/\\"/g')
           aws lexv2-models start-import --import-id $import_Id --resource-specification "$import_data" --merge-strategy "Append" --region us-east-1
