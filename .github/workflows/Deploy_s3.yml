@@ -37,9 +37,9 @@ jobs:
       #   run: |
       #     aws lambda delete-function --function-name ved --region us-west-1   # Ignore error if function doesn't exist
 
-      - name: Deploy Lambda Function
-        run: |
-          aws lambda create-function --function-name ve --runtime python3.11 --role arn:aws:iam::115941228118:role/yes --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-west-1
+      # - name: Deploy Lambda Function
+      #   run: |
+      #     aws lambda create-function --function-name ve --runtime python3.11 --role arn:aws:iam::115941228118:role/yes --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-west-1
 
       - name: Export and Store Lex Bot as Artifact
         run: |
