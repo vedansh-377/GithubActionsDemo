@@ -50,7 +50,6 @@ jobs:
           echo "::set-output name=exportId::$export_id"
 
           aws lexv2-models describe-export --export-id $export_id --region us-east-1> exported_bot.zip
-          mv exported_bot.zip $GITHUB_WORKSPACE/exported_bot.zip
           echo "::set-output name=exportedBotPath::$GITHUB_WORKSPACE/exported_bot.zip"
           # - name: Download Lex Bot Data
       #   run: |
@@ -60,11 +59,11 @@ jobs:
       # - name: List Downloaded Files
       #   run: |
       #      ls -l
-      # - name: Save Exported Bot as Artifact
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: exported-lex-bot
-      #     path: ./exported_bot.json
+      - name: Save Exported Bot as Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: exported-lex-bot
+          path: ./exported_bot.json
 
       # - name: Download Exported Bot Artifact
       #   uses: actions/download-artifact@v2
