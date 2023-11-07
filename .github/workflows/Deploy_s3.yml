@@ -66,6 +66,23 @@ jobs:
           sleep 30
           import_Id=$(echo "$import" | jq -r '.importId')
           echo "$import_Id"
-          import_data="{ "botImportSpecification": { "botName": "ddd", "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M", "dataPrivacy": { "childDirected": false }, "idleSessionTTLInSeconds": 3600 }, "importResourceSpecification": { "importedResourceId": "123456", "importedResourceName": "local", "importedResourceType": "BOT","importedResourceData": { "zipFile": "fileb://exported_bot.zip" } } }"
-          escaped_data=$(echo "$import_data" | sed 's/"/\\"/g')
-          aws lexv2-models start-import --import-id $import_Id --resource-specification "$escaped_data" --merge-strategy "Append" --region us-east-1
+          import_data=$(cat <<EOF
+          {
+            "botImportSpecification": {
+              "botName": "ddd",
+              "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
+              "dataPrivacy": { "childDirected": false },
+              "idleSessionTTLInSeconds": 3600
+            },
+            "importResourceSpecification": {
+              "importedResourceId": "123456",
+              "importedResourceName": "local",
+              "importedResourceType": "BOT",
+              "mergeStrategy": "Overwrite",
+              "importedResourceData": { "zipFile": "fileb://exported_bot.zip" }
+            }
+          }
+          EOF
+          )
+                    # escaped_data=$(echo "$import_data" | sed 's/"/\\"/g')
+          aws lexv2-models start-import --import-id $import_Id --resource-specification "$import_data" --merge-strategy "Append" --region us-east-1
