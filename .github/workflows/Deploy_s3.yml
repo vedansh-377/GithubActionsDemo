@@ -48,10 +48,10 @@ jobs:
           export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
 
           # Parse the response and extract the exportId using jq
-          export_id=$(echo "$export_response" | jq -r '.exportId')
+          # export_id=$(echo "$export_response" | jq -r '.exportId')
 
-          # Store the Export ID as an environment variable for later use
-          echo "::set-env name=LEX_EXPORT_ID::$export_id"
+          # # Store the Export ID as an environment variable for later use
+          # echo "::set-env name=LEX_EXPORT_ID::$export_id"
       
           # - name: Download Lex Bot Data
       #   run: |
