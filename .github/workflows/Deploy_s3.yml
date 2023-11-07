@@ -46,7 +46,7 @@ jobs:
           # Modify the command to export and save the Lex Bot appropriatel
           # aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
           export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
-
+          echo export_response
           # Parse the response and extract the exportId using jq
           # export_id=$(echo "$export_response" | jq -r '.exportId')
 
