@@ -63,7 +63,7 @@ jobs:
       - name: create Import URl
         run: |
           # aws s3api create-bucket --bucket bot --region us-east-1
-          aws s3 cp exported_bot.zip s3://vedansh
+          aws s3 cp exported_bot.zip s3://vedansh/bot
           import=$(aws lexv2-models create-upload-url --region us-east-1)
           sleep 30
           import_Id=$(echo "$import" | jq -r '.importId')
@@ -79,14 +79,14 @@ jobs:
             "testSetImportResourceSpecification": {
               "importInputLocation": {
                 "s3BucketName": "vedansh",
-                "s3Path": "s3://vedansh/exported_bot.zip"
+                "s3Path": "s3://vedansh/bot/exported_bot.zip"
               },
               "modality": "Text",
               "testSetName": "test",
               "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
               "storageLocation": {
                 "s3BucketName": "vedansh",
-                "s3Path": "s3://vedansh/exported_bot.zip"
+                "s3Path": "s3://vedansh/bot/exported_bot.zip"
               }
             }
           }
