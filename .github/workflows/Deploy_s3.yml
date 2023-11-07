@@ -29,9 +29,9 @@ jobs:
         run: |
           aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
 
-      - name: Upload Image to S3
-        run: |
-          aws s3 cp WhiteSaucePasta.jpg s3://vedansh
+      # - name: Upload Image to S3
+      #   run: |
+      #     aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
       # - name: Delete Lambda Function
       #   run: |
@@ -78,14 +78,14 @@ jobs:
             },
             "testSetImportResourceSpecification": {
               "importInputLocation": {
-                "s3BucketName": "bot",
-                "s3Path": "s3://bot"
+                "s3BucketName": "vedansh",
+                "s3Path": "s3://vedansh"
               },
               "modality": "Text",
               "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
               "storageLocation": {
-                "s3BucketName": "bot",
-                "s3Path": "s3://bot"
+                "s3BucketName": "vedansh",
+                "s3Path": "s3://vedansh"
               }
             }
           }
