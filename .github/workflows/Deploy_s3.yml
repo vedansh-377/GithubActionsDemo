@@ -62,7 +62,7 @@ jobs:
 
       - name: create Import URl
         run: |
-          import=$(aws create-upload-url)
+          import=$(aws lexv2-models create-upload-url)
           export_id=$(echo "$import" | jq -r '.importId')
           echo "$importId"
           cd artifacts
