@@ -48,12 +48,11 @@ jobs:
           export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
           export_id=$(echo "$export_response" | jq -r '.exportId')
           echo "::set-output name=exportId::$export_id"
-
           aws lexv2-models describe-export --export-id $export_id --region us-east-1
-          # echo "::set-output name=exportedBotPath::$GITHUB_WORKSPACE/exported_bot.zip"
-          ls $GITHUB_WORKSPACE/
+          download_url=$(echo "$export_response" | jq -r '.downloadUrl')
+          wget "$download_url" -O exported_bot.zip
       - name: Save Exported Bot as Artifact
         uses: actions/upload-artifact@v2
         with:
           name: exported-lex-bot
-          path: ${{ github.workspace }}/exported_bot.zip
+          path: exported_bot.zip
