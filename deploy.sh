@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Set up AWS credentials using environment variables
-export AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
-export AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
+# # Set up AWS credentials using environment variables
+# export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+# export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-export AWS_DEFAULT_REGION=us-west-1
+# export AWS_DEFAULT_REGION=us-west-1
 
 # Delete S3 Bucket
 aws s3 rb s3://vedansh --force  # Ignore error if bucket doesn't exist
