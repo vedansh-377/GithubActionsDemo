@@ -43,11 +43,11 @@ jobs:
 
       - name: Export and Store Lex Bot as Artifact
         run: |
-          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
-          export_id=$(echo "$export_response" | jq -r '.exportId')
-          echo "$export_id"
-          echo "-----"
-          data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1)
+          # export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
+          # export_id=$(echo "$export_response" | jq -r '.exportId')
+          # echo "$export_id"
+          # echo "-----"
+          data=$(aws lexv2-models describe-export --export-id 3C7FQRDHZO --region us-east-1)
           download_url=$(echo "$data" | jq -r '.downloadUrl')
           echo "Export Response JSON: $data"
           wget -O exported_bot.zip "$download_url"
