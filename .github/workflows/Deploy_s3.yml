@@ -59,3 +59,13 @@ jobs:
         with:
           name: exported-lex-bot
           path: exported_bot.zip
+
+      - name: create Import URl
+        run: |
+          import=$(aws create-upload-url)
+          export_id=$(echo "$import" | jq -r '.importId')
+          echo "$importId"
+          cd artifacts
+          import_data='{ "botImportSpecification": { "botName": "ddd", "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M", "dataPrivacy": { "childDirected": false }, "idleSessionTTLInSeconds": 3600 }, "importResourceSpecification": { "importedResourceId": "123456", "importedResourceName": "local", "importedResourceType": "BOT", "mergeStrategy": "Overwrite", "importedResourceData": { "zipFile": "fileb://exported_bot.zip" } } }'
+          escaped_data=$(echo "$import_data" | sed 's/"/\\"/g')
+          aws lexv2-models start-import --import-id $importId --resource-specification "$escaped_data"
