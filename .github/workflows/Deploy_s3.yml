@@ -45,14 +45,14 @@ jobs:
         run: |
           # Modify the command to export and save the Lex Bot appropriatel
           aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
-      - name: Download Lex Bot Data
-        run: |
-          # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
-          curl -o exported_bot.zip "URL_PROVIDED_IN_JSON"
+      # - name: Download Lex Bot Data
+      #   run: |
+      #     # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
+      #     curl -o exported_bot.zip "URL_PROVIDED_IN_JSON"
           
-      - name: List Downloaded Files
-        run: |
-           ls -l
+      # - name: List Downloaded Files
+      #   run: |
+      #      ls -l
       - name: Save Exported Bot as Artifact
         uses: actions/upload-artifact@v2
         with:
