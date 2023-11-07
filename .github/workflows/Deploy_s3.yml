@@ -63,6 +63,7 @@ jobs:
       - name: create Import URl
         run: |
           import=$(aws lexv2-models create-upload-url --region us-east-1)
+          sleep 10
           export_id=$(echo "$import" | jq -r '.importId')
           echo "$importId"
           import_data='{ "botImportSpecification": { "botName": "ddd", "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M", "dataPrivacy": { "childDirected": false }, "idleSessionTTLInSeconds": 3600 }, "importResourceSpecification": { "importedResourceId": "123456", "importedResourceName": "local", "importedResourceType": "BOT", "mergeStrategy": "Overwrite", "importedResourceData": { "zipFile": "fileb://exported_bot.zip" } } }'
