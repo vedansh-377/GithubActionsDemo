@@ -33,9 +33,9 @@ jobs:
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
-      # - name: Delete Lambda Function
-      #   run: |
-      #     aws lambda delete-function --function-name ved --region eu-west-1 || true  # Ignore error if function doesn't exist
+      - name: Delete Lambda Function
+        run: |
+          aws lambda delete-function --function-name ved --region eu-west-1 || true  # Ignore error if function doesn't exist
 
       - name: Deploy Lambda Function
         run: |
@@ -44,7 +44,7 @@ jobs:
       - name: Export and Store Lex Bot as Artifact
         run: |
           # Modify the command to export and save the Lex Bot appropriatel
-          aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region eu-east-1
+          aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
       - name: Download Lex Bot Data
         run: |
           # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
