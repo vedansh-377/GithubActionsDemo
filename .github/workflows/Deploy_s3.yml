@@ -23,7 +23,7 @@ jobs:
       - name: Delete S3 Bucket
         run: |
           # Replace your-bucket-name with your actual bucket name
-          aws s3 rb s3://vedansh --force || true  # Ignore error if bucket doesn't exist
+          aws s3 rb s3://vedansh --force  --region us-west-1  # Ignore error if bucket doesn't exist
 
       - name: Deploy S3 Bucket
         run: |
@@ -35,11 +35,11 @@ jobs:
 
       - name: Delete Lambda Function
         run: |
-          aws lambda delete-function --function-name vedu --region eu-west-1 || true  # Ignore error if function doesn't exist
+          aws lambda delete-function --function-name ved --region eu-west-1 || true  # Ignore error if function doesn't exist
 
       - name: Deploy Lambda Function
         run: |
-          aws lambda create-function --function-name vedu --runtime python3.11 --role arn:aws:iam::115941228118:role/lambda --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region eu-west-1
+          aws lambda create-function --function-name ved --runtime python3.11 --role arn:aws:iam::115941228118:role/lambda --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region eu-west-1
 
       - name: Export and Store Lex Bot as Artifact
         run: |
