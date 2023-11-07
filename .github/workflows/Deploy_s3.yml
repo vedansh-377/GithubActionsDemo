@@ -43,12 +43,22 @@ jobs:
 
       - name: Export and Store Lex Bot as Artifact
         run: |
-          # Modify the command to export and save the Lex Bot appropriatel
-          # aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
           export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
           export_id=$(echo "$export_response" | jq -r '.exportId')
           echo "Export ID: $export_id"
-          echo "::set-output name=exportId::$export_id"
+          # echo "::set-output name=exportId::$export_id"
+          aws lexv2-models describe-export --export-id $export_id --file-format Zip > exported_bot.zip
+
+          mv exported_bot.zip $GITHUB_WORKSPACE/exported_bot.zip
+          echo "::set-output name=exportedBotPath::$GITHUB_WORKSPACE/exported_bot.zip"
+
+      # - name: Import Lex Bot
+      #   run: |
+      #     export_id_from_previous_step=${{ steps.export_bot.outputs.exportId }}
+      #     export_file_path=${{ steps.fetch_exported_zip.outputs.exportedBotPath }}
+      #     # Perform the import command using export ID and the file path
+      #     aws lexv2-models import --resource-specification "{\"botImportSpecification\": {\"mergeStrategy\": \"FAIL_ON_CONFLICT\", \"resourceType\": \"BOT\", \"botId\": \"Your_New_Bot_ID\"}}" --file-format Zip --file $export_file_path --region us-west-1
+
       #   run: |
       #     # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
       #     curl -o exported_bot.zip "URL_PROVIDED_IN_JSON"
