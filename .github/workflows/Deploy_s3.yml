@@ -15,4 +15,4 @@ jobs:
 
       - name: Run Bash script
         run: |
-          bash your_script.sh
+          bash deploy.sh
