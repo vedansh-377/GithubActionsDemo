@@ -4,9 +4,12 @@
 git checkout $GITHUB_SHA
 
 # Set up AWS CLI
-aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-aws configure set region us-west-1
+aws configure
+# aws configure set aws_access_key_id AKIARV7VCXZLEBICHUGG
+
+# aws configure set aws_secret_access_key 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
+
+# aws configure set region us-west-1
 
 # Delete S3 Bucket
 aws s3 rb s3://vedansh --force || true  # Ignore error if bucket doesn't exist
