@@ -47,8 +47,8 @@ jobs:
           # aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1
           export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
           export_id=$(echo "$export_response" | jq -r '.exportId')
+          echo "Export ID: $export_id"
           echo "::set-output name=exportId::$export_id"
-          # - name: Download Lex Bot Data
       #   run: |
       #     # Replace URL_PROVIDED_IN_JSON with the URL from your JSON response
       #     curl -o exported_bot.zip "URL_PROVIDED_IN_JSON"
