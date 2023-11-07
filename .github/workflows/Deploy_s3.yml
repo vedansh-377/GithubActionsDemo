@@ -80,14 +80,14 @@ jobs:
             "testSetImportResourceSpecification": {
               "importInputLocation": {
                 "s3BucketName": "vedansh",
-                "s3Path": 'vedansh/bot/exported_bot.zip'
+                "s3Path": "vedansh/bot/exported_bot.zip"
               },
               "modality": "Text",
               "testSetName": "test",
               "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
               "storageLocation": {
                 "s3BucketName": "vedansh",
-                "s3Path": 'vedansh/bot/exported_bot.zip'
+                "s3Path": "vedansh/bot/exported_bot.zip"
               }
             }
           }
