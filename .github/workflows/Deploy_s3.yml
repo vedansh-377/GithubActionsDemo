@@ -27,7 +27,7 @@ jobs:
 
       - name: Deploy S3 Bucket
         run: |
-          # aws s3api create-bucket --bucket vedansh --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1 --acl public-read
+          aws s3api create-bucket --bucket vedansh --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1
           aws s3api put-bucket-policy --bucket vedansh --region us-east-1 --policy '{
             "Version": "2012-10-17",
             "Statement": [
