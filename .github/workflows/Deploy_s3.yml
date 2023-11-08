@@ -79,9 +79,12 @@ jobs:
           # set -e
           echo "$import"
           echo "Upload URL: $upload_Url"
-          http=$(command -v http || command -v curl)
+          file_data=$(cat exported_bot.zip | base64)
+          echo "::set-output name=file_data::$file_data"
+          # http=$(command -v http || command -v curl)
+          curl -X PUT -H "Content-Type: application/zip" --data-binary "@file_data" "$upload_Url"
 
-          $http --request PUT $UPLOAD_URL --upload-file exported_bot.zip --header "Content-Type: application/zip"
+          # $http --request PUT $UPLOAD_URL --upload-file exported_bot.zip --header "Content-Type: application/zip"
       # - name: create Import URl
       #   run: |
       #     # aws s3api create-bucket --bucket bot --region us-east-1
