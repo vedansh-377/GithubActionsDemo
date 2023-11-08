@@ -27,8 +27,19 @@ jobs:
 
       - name: Deploy S3 Bucket
         run: |
-          aws s3api create-bucket --bucket vedansh --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1 --acl public-read
-
+          # aws s3api create-bucket --bucket vedansh --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1 --acl public-read
+          aws s3api put-bucket-policy --bucket vedansh --region us-east-1 --policy '{
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Sid": "PublicReadGetObject",
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": "s3:GetObject",
+                "Resource": "arn:aws:s3:::vedansh/*"
+              }
+            ]
+          }'
       # - name: Upload Image to S3
       #   run: |
       #     aws s3 cp WhiteSaucePasta.jpg s3://vedansh
