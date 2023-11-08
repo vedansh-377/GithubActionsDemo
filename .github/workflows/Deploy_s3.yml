@@ -77,7 +77,8 @@ jobs:
           sleep 30
           upload_Url=$(echo "$import" | jq -r '.uploadUrl')
           # set -e
-          echo "$upload_url"
+          echo "$import"
+          echo "Upload URL: $upload_Url"
           http=$(command -v http || command -v curl)
 
           $http --request PUT $UPLOAD_URL --upload-file exported_bot.zip --header "Content-Type: application/zip"
