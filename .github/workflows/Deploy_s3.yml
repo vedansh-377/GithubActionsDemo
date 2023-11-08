@@ -40,7 +40,7 @@ jobs:
 
       - name: Deploy Lambda Function
         run: |
-          aws lambda create-function --function-name ved --runtime python3.11 --role arn:aws:iam::115941228118:role/service-role/PastaOrderFunction-role-kf02fxax --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-east-1
+          aws lambda create-function --function-name ved --runtime python3.8 --role arn:aws:iam::115941228118:role/service-role/PastaOrderFunction-role-kf02fxax --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region ap-northeast-3
 
       - name: Export and Store Lex Bot as Artifact
         run: |
