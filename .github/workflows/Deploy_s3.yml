@@ -27,8 +27,9 @@ jobs:
 
       - name: Deploy S3 Bucket
         run: |
-         aws s3api put-bucket-acl --bucket vedansh --acl public-read-write
          aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+         aws s3api put-bucket-acl --bucket vedansh --acl public-read-write
+
 
       # - name: Upload Image to S3
       #   run: |
