@@ -20,28 +20,27 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  # Change to your desired AWS region
 
-      # - name: Delete S3 Bucket
-      #   run: |
-      #     # Replace your-bucket-name with your actual bucket name
-      #     aws s3 rb s3://vedansh --force  --region us-east-1  # Ignore error if bucket doesn't exist
+      - name: Delete S3 Bucket
+        run: |
+          # Replace your-bucket-name with your actual bucket name
+          aws s3 rb s3://vedansh --force  --region us-east-1  # Ignore error if bucket doesn't exist
 
-      # - name: Deploy S3 Bucket
-      #   run: |
-      #    aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
-      #    aws s3api put-bucket-acl --bucket vedansh --acl public-read-write
+      - name: Deploy S3 Bucket
+        run: |
+         aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
 
 
-      # - name: Upload Image to S3
-      #   run: |
-      #     aws s3 cp WhiteSaucePasta.jpg s3://vedansh
+      - name: Upload Image to S3
+        run: |
+          aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
       # - name: Delete Lambda Function
       #   run: |
       #     aws lambda delete-function --function-name ved --region us-west-1   # Ignore error if function doesn't exist
 
-      # - name: Deploy Lambda Function
-      #   run: |
-      #     aws lambda create-function --function-name ve --runtime python3.11 --role arn:aws:iam::115941228118:role/yes --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-west-1
+      - name: Deploy Lambda Function
+        run: |
+          aws lambda create-function --function-name ved --runtime python3.11 --role arn:aws:iam::115941228118:role/lambda --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region us-west-1
 
       - name: Export and Store Lex Bot as Artifact
         run: |
@@ -82,6 +81,6 @@ jobs:
           curl -X PUT -H "Content-Type: application/zip" --data-binary "@exported_bot.zip" "$upload_Url"
           # import bot to lexv2
           aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"vedanshBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
-          sleep 70
-          aws lexv2-models describe-import --import-id "$import_id"
+          sleep 40
+          aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
       
