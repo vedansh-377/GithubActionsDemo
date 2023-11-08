@@ -76,7 +76,8 @@ jobs:
           import=$(aws lexv2-models create-upload-url --region us-east-1)
           sleep 30
           upload_Url=$(echo "$import" | jq -r '.uploadUrl')
-          set -e
+          # set -e
+          echo "upload_url"
           http=$(command -v http || command -v curl)
             
             # Download the .zip file (if it's hosted somewhere)
