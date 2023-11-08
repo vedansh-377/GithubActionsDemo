@@ -25,10 +25,10 @@ jobs:
       #     # Replace your-bucket-name with your actual bucket name
       #     aws s3 rb s3://vedansh --force  --region us-east-1  # Ignore error if bucket doesn't exist
 
-      - name: Deploy S3 Bucket
-        run: |
-         aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
-         aws s3api put-bucket-acl --bucket vedansh --acl public-read-write
+      # - name: Deploy S3 Bucket
+      #   run: |
+      #    aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+      #    aws s3api put-bucket-acl --bucket vedansh --acl public-read-write
 
 
       # - name: Upload Image to S3
@@ -62,6 +62,28 @@ jobs:
           name: exported-lex-bot
           path: exported_bot.zip
 
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+            python-version: 3.8  # Change the version as needed
+  
+      - name: Install dependencies
+        run: |
+          pip install urllib3
+  
+      - name: Upload Bot
+        run: |
+          import=$(aws lexv2-models create-upload-url --region us-east-1)
+          sleep 30
+          upload_Url=$(echo "$import" | jq -r '.uploadUrl')
+          set -e
+          http=$(command -v http || command -v curl)
+            
+            # Download the .zip file (if it's hosted somewhere)
+          # wget -O exported_bot.zip "URL_TO_YOUR_ZIP_FILE"  # Replace URL_TO_YOUR_ZIP_FILE with the actual URL
+  
+            # Upload the .zip file
+          $http --request PUT $UPLOAD_URL --upload-file exported_bot.zip --header "Content-Type: application/zip"
       # - name: create Import URl
       #   run: |
       #     # aws s3api create-bucket --bucket bot --region us-east-1
@@ -70,6 +92,7 @@ jobs:
       #     import=$(aws lexv2-models create-upload-url --region us-east-1)
       #     sleep 30
       #     import_Id=$(echo "$import" | jq -r '.importId')
+      # arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M
       #     echo "$import_Id"
       #     import_data=$(cat <<EOF
       #     {
