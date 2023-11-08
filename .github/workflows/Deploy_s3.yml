@@ -77,13 +77,9 @@ jobs:
           sleep 30
           upload_Url=$(echo "$import" | jq -r '.uploadUrl')
           # set -e
-          echo "upload_url"
+          echo "$upload_url"
           http=$(command -v http || command -v curl)
-            
-            # Download the .zip file (if it's hosted somewhere)
-          # wget -O exported_bot.zip "URL_TO_YOUR_ZIP_FILE"  # Replace URL_TO_YOUR_ZIP_FILE with the actual URL
-  
-            # Upload the .zip file
+
           $http --request PUT $UPLOAD_URL --upload-file exported_bot.zip --header "Content-Type: application/zip"
       # - name: create Import URl
       #   run: |
