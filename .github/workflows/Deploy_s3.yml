@@ -23,11 +23,11 @@ jobs:
       - name: Delete S3 Bucket
         run: |
           # Replace your-bucket-name with your actual bucket name
-          aws s3 rb s3://vedansh --force  --region us-west-1  # Ignore error if bucket doesn't exist
+          aws s3 rb s3://vedansh --force  --region us-east-1  # Ignore error if bucket doesn't exist
 
       - name: Deploy S3 Bucket
         run: |
-          aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
+          aws s3api create-bucket --bucket vedansh --region us-east-1 --create-bucket-configuration LocationConstraint=us-east-1 --acl public-read
 
       # - name: Upload Image to S3
       #   run: |
@@ -60,39 +60,38 @@ jobs:
           name: exported-lex-bot
           path: exported_bot.zip
 
-      - name: create Import URl
-        run: |
-          # aws s3api create-bucket --bucket bot --region us-east-1
-          aws s3api put-object --bucket vedansh --key bot/
-          aws s3 cp exported_bot.zip s3://vedansh/bot/
-          import=$(aws lexv2-models create-upload-url --region us-east-1)
-          sleep 30
-          import_Id=$(echo "$import" | jq -r '.importId')
-          echo "$import_Id"
-          import_data=$(cat <<EOF
-          {
-            "botImportSpecification": {
-              "botName": "PastaOrderDemo",
-              "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
-              "dataPrivacy": { "childDirected": false },
-              "idleSessionTTLInSeconds": 3600
-            },
-            "testSetImportResourceSpecification": {
-              "importInputLocation": {
-                "s3BucketName": "vedansh",
-                "s3Path": "vedansh/bot/exported_bot.zip"
-              },
-              "modality": "Text",
-              "testSetName": "test",
-              "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
-              "storageLocation": {
-                "s3BucketName": "vedansh",
-                "s3Path": "vedansh/bot/exported_bot.zip"
-              }
-            }
-          }
-          EOF
-          )
+      # - name: create Import URl
+      #   run: |
+      #     # aws s3api create-bucket --bucket bot --region us-east-1
+      #     aws s3api put-object --bucket vedansh --key bot/
+      #     aws s3 cp exported_bot.zip s3://vedansh/bot/
+      #     import=$(aws lexv2-models create-upload-url --region us-east-1)
+      #     sleep 30
+      #     import_Id=$(echo "$import" | jq -r '.importId')
+      #     echo "$import_Id"
+      #     import_data=$(cat <<EOF
+      #     {
+      #       "botImportSpecification": {
+      #         "botName": "PastaOrderDemo",
+      #         "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
+      #         "dataPrivacy": { "childDirected": false },
+      #         "idleSessionTTLInSeconds": 3600
+      #       },
+      #       "testSetImportResourceSpecification": {
+      #         "importInputLocation": {
+      #           "s3BucketName": "vedansh",
+      #           "s3Path": "vedansh/bot/exported_bot.zip"
+      #         },
+      #         "modality": "Text",
+      #         "testSetName": "test",
+      #         "roleArn": "arn:aws:iam::115941228118:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M",
+      #         "storageLocation": {
+      #           "s3BucketName": "vedansh",
+      #           "s3Path": "vedansh/bot/exported_bot.zip"
+      #         }
+      #       }
+      #     }
+      #     EOF
+      #     )
 
-                    # escaped_data=$(echo "$import_data" | sed 's/"/\\"/g')
-          aws lexv2-models start-import --import-id $import_Id --resource-specification "$import_data" --merge-strategy "Append" --region us-east-1
+      #     aws lexv2-models start-import --import-id $import_Id --resource-specification "$import_data" --merge-strategy "Append" --region us-east-1
