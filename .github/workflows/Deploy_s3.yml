@@ -20,23 +20,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  
 
-      - name: Delete S3 Bucket
-        run: |
-          # Replace your-bucket-name with your actual bucket name
-          aws s3 rb s3://vedansh --force  --region us-east-1  # Ignore error if bucket doesn't exist
-
       - name: Deploy S3 Bucket
         run: |
-         aws s3api create-bucket --bucket vedansh --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
-
+          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1 && aws s3api put-bucket-policy --bucket lex-demo-123 --policy '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":"*","Action":"s3:GetObject","Resource":"arn:aws:s3:::lex-demo-123/*"}]}'
 
       - name: Upload Image to S3
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://vedansh
 
-      # - name: Delete Lambda Function
-      #   run: |
-      #     aws lambda delete-function --function-name ved --region us-west-1   # Ignore error if function doesn't exist
 
       - name: Deploy Lambda Function
         run: |
@@ -70,7 +61,7 @@ jobs:
         run: |
           pip install urllib3
   
-      - name: Upload Bot
+      - name: Upload Bot and update
         run: |
           import=$(aws lexv2-models create-upload-url --region us-east-1)
           sleep 30
@@ -83,4 +74,12 @@ jobs:
           aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"vedanshBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
           sleep 30
           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
+          # Now it will attach the lambda function
+          botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='vedanshBot'].botId" --output text)
+          read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text)
+          echo "Bot Alias ID: $botAliasId"
+          echo "Bot Alias Name: $botAliasName"
+          echo "Bot Version: $botVersion"
+          aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion"
+          aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US"
       
