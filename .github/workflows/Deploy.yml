@@ -24,25 +24,9 @@ jobs:
       - name: Deploy S3 Bucket
         run: |
           aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
-          # aws s3api put-bucket-policy --bucket lex-demo-123 --policy policy.json
-      - name: Apply Bucket Policy
-        run: |
-          policy='{
-            "Version":"2012-10-17",
-            "Statement":[
-              {
-                "Effect":"Allow",
-                "Principal":"*",
-                "Action":"s3:GetObject",
-                "Resource":"arn:aws:s3:::lex-demo-123/*"
-              }
-            ]
-          }'
-          echo "$policy" > policy.json
-          aws s3api put-bucket-policy --bucket lex-demo-123 --policy file://policy.json
       - name: Upload Image to S3
         run: |
-          aws s3 cp WhiteSaucePasta.jpg s3://vedansh
+          aws s3 cp WhiteSaucePasta.jpg s3://lex-demo-123
 
 
       - name: Deploy Lambda Function
@@ -87,11 +71,11 @@ jobs:
           echo "::set-output name=file_data::$file_data"
           curl -X PUT -H "Content-Type: application/zip" --data-binary "@exported_bot.zip" "$upload_Url"
           # import bot to lexv2
-          aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"vedanshBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
+          aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
           sleep 30
           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
           # Now it will attach the lambda function
-          botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='vedanshBot'].botId" --output text)
+          botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text)
           read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text)
           echo "Bot Alias ID: $botAliasId"
           echo "Bot Alias Name: $botAliasName"
