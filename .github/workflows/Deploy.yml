@@ -23,7 +23,7 @@ jobs:
       - name: Deploy S3 Bucket
         run: |
           aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1
-          aws s3api put-bucket-policy --bucket lex-demo-123 --policy file://bucket-policy.json
+          aws s3api put-bucket-policy --bucket lex-demo-123 --policy file://policy.json
 
       - name: Upload Image to S3
         run: |
