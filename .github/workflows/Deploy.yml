@@ -75,11 +75,11 @@ jobs:
           sleep 30
           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
           # Now it will attach the lambda function
-          botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text)
-          read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text)
+          botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text --region us-east-1)
+          read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text --region us-east-1)
           echo "Bot Alias ID: $botAliasId"
           echo "Bot Alias Name: $botAliasName"
           echo "Bot Version: $botVersion"
-          aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion"
-          aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US"
+          aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion" --region us-east-1
+          aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US" --region us-east-1
       
