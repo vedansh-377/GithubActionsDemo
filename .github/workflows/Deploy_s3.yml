@@ -81,6 +81,6 @@ jobs:
           curl -X PUT -H "Content-Type: application/zip" --data-binary "@exported_bot.zip" "$upload_Url"
           # import bot to lexv2
           aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"vedanshBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
-          sleep 40
+          sleep 30
           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
       
