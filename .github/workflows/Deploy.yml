@@ -73,7 +73,9 @@ jobs:
           aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
           sleep 30
           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
+          
           # Now it will attach the lambda function
+
           botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text --region us-east-1)
           read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text --region us-east-1)
           echo "Bot Alias ID: $botAliasId"
