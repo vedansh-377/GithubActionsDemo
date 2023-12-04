@@ -22,8 +22,8 @@ jobs:
 
       - name: Deploy S3 Bucket
         run: | 
-          echo ${{secrets.AWS_KEY_1}}
-          echo ${{secrets.AWS_SECRET_1}}
+          # echo ${{secrets.AWS_KEY_1}}
+          # echo ${{secrets.AWS_SECRET_1}}
           aws s3 ls --profile dev
           aws s3 ls --profile agiliad
 
