@@ -29,9 +29,9 @@ jobs:
           aws s3 ls --profile dev
           aws s3 ls --profile agiliad
 
-          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad || true
+          aws s3api create-bucket --bucket lex-demo-12 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad || true
 
-          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev || true
+          aws s3api create-bucket --bucket lex-demo-12 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev || true
       - name: Upload Image to S3
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://lex-demo-123 || true
@@ -42,13 +42,13 @@ jobs:
 
       - name: Export and Store Lex Bot as Artifact
         run: |
-          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1) --profile dev
+          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1 --profile dev)
           export_id=$(echo "$export_response" | jq -r '.exportId')
           echo "$export_id"
           echo "-----"
           sleep 20
 
-          data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1) --profile dev
+          data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1 --profile dev)
           download_url=$(echo "$data" | jq -r '.downloadUrl') 
           echo "Export Response JSON: $data"
           wget -O exported_bot.zip "$download_url"
@@ -70,7 +70,7 @@ jobs:
   
       - name: Upload Bot and update
         run: |
-          import=$(aws lexv2-models create-upload-url --region us-east-1) --profile agiliad
+          import=$(aws lexv2-models create-upload-url --region us-east-1 --profile agiliad)
           sleep 30
           upload_Url=$(echo "$import" | jq -r '.uploadUrl')
           import_id=$(echo "$import" | jq -r '.importId')
@@ -81,6 +81,8 @@ jobs:
           aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1 --profile agiliad
           sleep 30
           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1 --profile agiliad
+          
+          # create a bot in agiliad profile
           
           # Now it will attach the lambda function
 
