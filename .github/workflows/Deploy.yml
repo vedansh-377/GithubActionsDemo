@@ -19,10 +19,17 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1  
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1 --profile dev
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY_1 }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_1 }}
+          aws-region: us-west-1  
+
 
       - name: Deploy S3 Bucket
         run: | 
-          aws configure list
+          aws configure list --profile dev
           echo ${{secrets.AWS_KEY_1}}
           echo ${{secrets.AWS_SECRET_1}}
           aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1 || true
