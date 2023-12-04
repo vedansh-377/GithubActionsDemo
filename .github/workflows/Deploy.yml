@@ -25,9 +25,12 @@ jobs:
           aws configure list --profile dev
           echo ${{secrets.AWS_KEY_1}}
           echo ${{secrets.AWS_SECRET_1}}
-          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad|| true
+          aws s3 ls --profile dev
+          aws s3 ls --profile agiliad
 
-          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev|| true
+          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad || true
+
+          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev || true
       - name: Upload Image to S3
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://lex-demo-123 || true
