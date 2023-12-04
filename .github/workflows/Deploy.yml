@@ -25,7 +25,7 @@ jobs:
 
       - name: Deploy S3 Bucket
         run: | 
-          ./dummy.sh
+          sudo ./dummy.sh
           aws iam create-role --role-name Test-Role1 --assume-role-policy-document Policy.json --profile agiliad 
           aws s3 ls --profile dev
           aws s3 ls --profile agiliad
