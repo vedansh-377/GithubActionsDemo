@@ -12,27 +12,20 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-1  
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2 --profile dev
-        with:
-          aws-access-key-id: ${{ secrets.AWS_KEY_1 }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_1 }}
-          aws-region: us-west-1  
-
+  
+      - name: Configure aws credentials
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile dev
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
+          aws configure set aws_access_key_id ${{ secrets.AWS_KEY_1 }} --profile agiliad
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_1 }} agiliad
 
       - name: Deploy S3 Bucket
         run: | 
           aws configure list --profile dev
           echo ${{secrets.AWS_KEY_1}}
           echo ${{secrets.AWS_SECRET_1}}
-          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1 || true
+          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev|| true
       - name: Upload Image to S3
         run: |
           aws s3 cp WhiteSaucePasta.jpg s3://lex-demo-123 || true
@@ -43,14 +36,14 @@ jobs:
 
       - name: Export and Store Lex Bot as Artifact
         run: |
-          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1)
+          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1) --profile dev
           export_id=$(echo "$export_response" | jq -r '.exportId')
           echo "$export_id"
           echo "-----"
           sleep 20
 
-          data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1)
-          download_url=$(echo "$data" | jq -r '.downloadUrl')
+          data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1) --profile dev
+          download_url=$(echo "$data" | jq -r '.downloadUrl') 
           echo "Export Response JSON: $data"
           wget -O exported_bot.zip "$download_url"
 
@@ -71,7 +64,7 @@ jobs:
   
       - name: Upload Bot and update
         run: |
-          import=$(aws lexv2-models create-upload-url --region us-east-1)
+          import=$(aws lexv2-models create-upload-url --region us-east-1) --profile agiliad
           sleep 30
           upload_Url=$(echo "$import" | jq -r '.uploadUrl')
           import_id=$(echo "$import" | jq -r '.importId')
@@ -79,17 +72,17 @@ jobs:
           echo "::set-output name=file_data::$file_data"
           curl -X PUT -H "Content-Type: application/zip" --data-binary "@exported_bot.zip" "$upload_Url"
           # import bot to lexv2
-          aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1
+          aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1 --profile agiliad
           sleep 30
-          aws lexv2-models describe-import --import-id "$import_id" --region us-east-1
+          aws lexv2-models describe-import --import-id "$import_id" --region us-east-1 --profile agiliad
           
           # Now it will attach the lambda function
 
-          botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text --region us-east-1)
-          read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text --region us-east-1)
-          echo "Bot Alias ID: $botAliasId"
-          echo "Bot Alias Name: $botAliasName"
-          echo "Bot Version: $botVersion"
-          aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion" --region us-east-1
-          aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US" --region us-east-1
+          # botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text --region us-east-1)
+          # read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text --region us-east-1)
+          # echo "Bot Alias ID: $botAliasId"
+          # echo "Bot Alias Name: $botAliasName"
+          # echo "Bot Version: $botVersion"
+          # aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion" --region us-east-1
+          # aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US" --region us-east-1
       
