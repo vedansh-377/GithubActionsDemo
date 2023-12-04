@@ -18,13 +18,15 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile dev
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
           aws configure set aws_access_key_id ${{ secrets.AWS_KEY_1 }} --profile agiliad
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_1 }} agiliad
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_1 }} --profile agiliad
 
       - name: Deploy S3 Bucket
         run: | 
           aws configure list --profile dev
           echo ${{secrets.AWS_KEY_1}}
           echo ${{secrets.AWS_SECRET_1}}
+          aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad|| true
+
           aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev|| true
       - name: Upload Image to S3
         run: |
