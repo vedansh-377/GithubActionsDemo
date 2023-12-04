@@ -21,7 +21,9 @@ jobs:
           aws-region: us-west-1  
 
       - name: Deploy S3 Bucket
-        run: |
+        run: | 
+          echo secrets.AWS_KEY_1
+          echo secrets.AWS_SECRET_1
           aws s3api create-bucket --bucket lex-demo-123 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1 || true
       - name: Upload Image to S3
         run: |
