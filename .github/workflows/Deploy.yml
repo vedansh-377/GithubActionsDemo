@@ -1,97 +1,97 @@
-name: Deploy S3,Deploy Lambda Function, LEXV2
+# name: Deploy S3,Deploy Lambda Function, LEXV2
 
-on:
-  push:
-    branches:
-      - main  
+# on:
+#   push:
+#     branches:
+#       - main  
 
-jobs:
-  deploy-s3-lambda:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy-s3-lambda:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v2
   
-      - name: Configure aws credentials
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile dev
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
-          aws configure set region us-east-1 --profile dev
-          aws configure set aws_access_key_id ${{ secrets.AWS_KEY_1 }} --profile agiliad
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_1 }} --profile agiliad
-          aws configure set region us-east-1 --profile agiliad
+#       - name: Configure aws credentials
+#         run: |
+#           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} --profile dev
+#           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} --profile dev
+#           aws configure set region us-east-1 --profile dev
+#           aws configure set aws_access_key_id ${{ secrets.AWS_KEY_1 }} --profile agiliad
+#           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_1 }} --profile agiliad
+#           aws configure set region us-east-1 --profile agiliad
 
 
-      - name: Deploy S3 Bucket
-        run: | 
-          sudo bash dummy.sh
-          aws iam create-role --role-name Test-Role1 --assume-role-policy-document Policy.json --profile agiliad 
-          aws s3 ls --profile dev
-          aws s3 ls --profile agiliad
+#       - name: Deploy S3 Bucket
+#         run: | 
+#           sudo bash dummy.sh
+#           aws iam create-role --role-name Test-Role1 --assume-role-policy-document Policy.json --profile agiliad 
+#           aws s3 ls --profile dev
+#           aws s3 ls --profile agiliad
 
-          aws s3api create-bucket --bucket lex-demo-12 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad || true
+#           aws s3api create-bucket --bucket lex-demo-12 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile agiliad || true
 
-          aws s3api create-bucket --bucket lex-demo-12 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev || true
-      - name: Upload Image to S3
-        run: |
-          aws s3 cp WhiteSaucePasta.jpg s3://lex-demo-123 || true
+#           aws s3api create-bucket --bucket lex-demo-12 --region us-west-1 --create-bucket-configuration LocationConstraint=us-west-1  --profile dev || true
+#       - name: Upload Image to S3
+#         run: |
+#           aws s3 cp WhiteSaucePasta.jpg s3://lex-demo-123 || true
 
-      - name: Deploy Lambda Function
-        run: |
-          aws lambda create-function --function-name PastaOrderFunction --runtime python3.8 --role arn:aws:iam::115941228118:role/service-role/PastaOrderFunction-role-kf02fxax --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region ap-northeast-3 || true
+#       - name: Deploy Lambda Function
+#         run: |
+#           aws lambda create-function --function-name PastaOrderFunction --runtime python3.8 --role arn:aws:iam::115941228118:role/service-role/PastaOrderFunction-role-kf02fxax --handler lambda_function.lambda_handler --zip-file fileb://PastaOrderFunction-195f7a38-883c-43a0-a8f3-007559e8df72.zip --region ap-northeast-3 || true
 
-      - name: Export and Store Lex Bot as Artifact
-        run: |
-          export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1 --profile dev)
-          export_id=$(echo "$export_response" | jq -r '.exportId')
-          echo "$export_id"
-          echo "-----"
-          sleep 20
+#       - name: Export and Store Lex Bot as Artifact
+#         run: |
+#           export_response=$(aws lexv2-models create-export --resource-specification "{\"botExportSpecification\": {\"botId\": \"ANSUSIV0FR\", \"botVersion\": \"1\"}}" --file-format LexJson --region us-east-1 --profile dev)
+#           export_id=$(echo "$export_response" | jq -r '.exportId')
+#           echo "$export_id"
+#           echo "-----"
+#           sleep 20
 
-          data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1 --profile dev)
-          download_url=$(echo "$data" | jq -r '.downloadUrl') 
-          echo "Export Response JSON: $data"
-          wget -O exported_bot.zip "$download_url"
+#           data=$(aws lexv2-models describe-export --export-id $export_id --region us-east-1 --profile dev)
+#           download_url=$(echo "$data" | jq -r '.downloadUrl') 
+#           echo "Export Response JSON: $data"
+#           wget -O exported_bot.zip "$download_url"
 
-      - name: Save Exported Bot as Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: exported-lex-bot
-          path: exported_bot.zip
+#       - name: Save Exported Bot as Artifact
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: exported-lex-bot
+#           path: exported_bot.zip
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-            python-version: 3.8  
+#       - name: Set up Python
+#         uses: actions/setup-python@v2
+#         with:
+#             python-version: 3.8  
   
-      - name: Install dependencies
-        run: |
-          pip install urllib3
+#       - name: Install dependencies
+#         run: |
+#           pip install urllib3
   
-      - name: Upload Bot and update
-        run: |
-          import=$(aws lexv2-models create-upload-url --region us-east-1 --profile agiliad)
-          sleep 30
-          upload_Url=$(echo "$import" | jq -r '.uploadUrl')
-          import_id=$(echo "$import" | jq -r '.importId')
-          echo "Upload URL: $upload_Url"
-          echo "::set-output name=file_data::$file_data"
-          curl -X PUT -H "Content-Type: application/zip" --data-binary "@exported_bot.zip" "$upload_Url"
-          # import bot to lexv2
-          aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1 --profile agiliad
-          sleep 30
-          aws lexv2-models describe-import --import-id "$import_id" --region us-east-1 --profile agiliad
+#       - name: Upload Bot and update
+#         run: |
+#           import=$(aws lexv2-models create-upload-url --region us-east-1 --profile agiliad)
+#           sleep 30
+#           upload_Url=$(echo "$import" | jq -r '.uploadUrl')
+#           import_id=$(echo "$import" | jq -r '.importId')
+#           echo "Upload URL: $upload_Url"
+#           echo "::set-output name=file_data::$file_data"
+#           curl -X PUT -H "Content-Type: application/zip" --data-binary "@exported_bot.zip" "$upload_Url"
+#           # import bot to lexv2
+#           aws lexv2-models start-import --import-id "$import_id" --resource-specification "{\"botImportSpecification\": {\"botName\": \"deploymentBot\",\"roleArn\": \"arn:aws:iam::115941228118:role/aws-servicerole/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_ECVNQFI8F8M\",\"dataPrivacy\": {\"childDirected\": false},\"idleSessionTTLInSeconds\": 600}}" --merge-strategy "FailOnConflict" --region us-east-1 --profile agiliad
+#           sleep 30
+#           aws lexv2-models describe-import --import-id "$import_id" --region us-east-1 --profile agiliad
           
-          # create a bot in agiliad profile
+#           # create a bot in agiliad profile
           
-          # Now it will attach the lambda function
+#           # Now it will attach the lambda function
 
-          # botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text --region us-east-1)
-          # read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text --region us-east-1)
-          # echo "Bot Alias ID: $botAliasId"
-          # echo "Bot Alias Name: $botAliasName"
-          # echo "Bot Version: $botVersion"
-          # aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion" --region us-east-1
-          # aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US" --region us-east-1
+#           # botid=$(aws lexv2-models list-bots --query "botSummaries[?botName=='deploymentBot'].botId" --output text --region us-east-1)
+#           # read -r botAliasId botAliasName botVersion <<< $(aws lexv2-models list-bot-aliases --bot-id "$botid" --query "botAliasSummaries[].[botAliasId, botAliasName, botVersion]" --output text --region us-east-1)
+#           # echo "Bot Alias ID: $botAliasId"
+#           # echo "Bot Alias Name: $botAliasName"
+#           # echo "Bot Version: $botVersion"
+#           # aws lexv2-models update-bot-alias --bot-alias-id "$botAliasId" --bot-alias-name "$botAliasName" --bot-alias-locale-settings "{\"en_US\":{\"enabled\":true,\"codeHookSpecification\":{\"lambdaCodeHook\":{\"lambdaARN\":\"arn:aws:lambda:us-east-1:115941228118:function:PastaOrderFunction\",\"codeHookInterfaceVersion\":\"1.0\"}}}}" --bot-id "$botid" --bot-version "$botVersion" --region us-east-1
+#           # aws lexv2-models build-bot-locale --bot-id "$botid" --bot-version "$botVersion" --locale-id "en_US" --region us-east-1
       
